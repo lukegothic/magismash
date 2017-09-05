@@ -1,4 +1,5 @@
 local fn = require("functions")
+local spells = require("spells")
 gamestates = { MENU = "menu", PLAY = "game", PAUSE ="gamepaused", END ="gameover" } -- Game states, en teoria esto es generico
 menucaptions = { "Play", "Options", "Exit" }  -- Labels de los items del menu
 menuoptions = {  -- Funcionalidad de los items del menu
@@ -101,6 +102,12 @@ function love.keypressed(key, scancode, isrepeat)
     end
   }
 end
+function love.mousepressed( x, y, button, istouch )
+  local spell = spells[table.concat(runestack)]
+  if spell ~= nil then
+    emptyRunestack()
+  end
+end
 function love.draw()
   fn.switch(gamestate): caseof {
     [gamestates.MENU] = function()
@@ -126,6 +133,12 @@ function love.draw()
         love.graphics.setNewFont(20)
         love.graphics.setColor(255,255,255)
         love.graphics.printf( table.concat(runeword, " "), window.width / 2, window.height / 2, 150, "center" )
+      end
+      local spell = spells[table.concat(runestack)]
+      if spell ~= nil then
+        local x, y = love.mouse.getPosition()
+        love.graphics.setColor(0, 255, 0, 125)
+        love.graphics.circle("fill", x, y, spell.targeting.radius)
       end
     end,
     [gamestates.PAUSE] = function()
